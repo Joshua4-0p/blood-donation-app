@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const _layout = () => {
+const list = () => {
   return (
     <View>
-      <Text>_layout</Text>
+      <Text>list</Text>
     </View>
   )
 }
 
-export default _layout
+export default list
