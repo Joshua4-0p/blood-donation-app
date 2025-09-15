@@ -75,8 +75,8 @@ jobs:
       # Uncomment if you want to upload to Coveralls
       - name: Coveralls
         uses: coverallsapp/github-action@v2
-         with:
-           github-token: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   integration-test:
     name: Integration/UI Tests
@@ -93,8 +93,6 @@ jobs:
       # If using Expo E2E:
       # - run: npx expo install
       # - run: npm run e2e
-
-# By default, all jobs must pass for the workflow to succeed and for merging to be allowed by branch protection rules.
 
   # Dependency review for PRs (checks if new dependencies introduce vulnerabilities)
   dependency-review:
