@@ -1,0 +1,115 @@
+name: Frontend CI/CD (React Native + Expo)
+
+on:
+  push:
+    branches:
+      - frontend-develop
+  pull_request:
+    branches:
+      - frontend-develop
+
+jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm run lint
+
+  build-android:
+    name: Build Android (Expo)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npx expo install
+      - run: npx expo build:android --non-interactive
+
+  build-ios:
+    name: Build iOS (Expo)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npx expo install
+      - run: npx expo build:ios --non-interactive
+
+  expo-preview:
+    name: Publish Expo Preview
+    needs: [build-android, build-ios]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npx expo install
+      - run: npx expo login -u ${{ secrets.EXPO_USERNAME }} -p ${{ secrets.EXPO_PASSWORD }}
+      - run: npx expo publish --non-interactive
+
+  unit-test:
+    name: Unit Test & Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm run test -- --coverage
+      - name: Enforce 70%+ coverage
+        run: |
+          npx jest --coverage --coverageThreshold='{"global": {"branches":70,"functions":70,"lines":70,"statements":70}}'
+      # Uncomment if you want to upload to Coveralls
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  integration-test:
+    name: Integration/UI Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      # Example for Detox; change to your integration test runner if different
+      # - run: npm run build:android
+      # - run: npm run e2e
+      # If using Expo E2E:
+      # - run: npx expo install
+      # - run: npm run e2e
+
+  # Dependency review for PRs (checks if new dependencies introduce vulnerabilities)
+  dependency-review:
+    name: Dependency Review (PRs)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/dependency-review-action@v4
+
+  # Security audit using npm audit
+  security-audit:
+    name: Security Audit (npm audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm audit --audit-level=critical --production
