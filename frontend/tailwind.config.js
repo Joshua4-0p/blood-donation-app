@@ -7,7 +7,14 @@
     ],
     presets: [require("nativewind/preset")],
     theme: {
-      extend: {},
-    },
+        extend: {
+          colors: {
+            'don8-primary': '#E53E3E',
+            'don8-text': '#1A365D',
+            'don8-bg': '#FDF2F8',
+            'don8-shape': '#F8BBD9',
+          }
+        },
+      },
     plugins: [],
   };
