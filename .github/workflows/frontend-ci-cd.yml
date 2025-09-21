@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci
+      - run: cd frontend && npm ci
       - run: npm run lint
 
   build-android:
@@ -28,7 +28,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci
+      - run: cd frontend && npm ci
       - run: npx expo install
       - run: npx expo build:android --non-interactive
 
@@ -40,7 +40,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci
+      - run: cd frontend && npm ci
       - run: npx expo install
       - run: npx expo build:ios --non-interactive
 
@@ -54,7 +54,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci
+      - run: cd frontend && npm ci
       - run: npx expo install
       - run: npx expo login -u ${{ secrets.EXPO_USERNAME }} -p ${{ secrets.EXPO_PASSWORD }}
       - run: npx expo publish --non-interactive
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci
+      - run: cd frontend && npm ci
       - run: npm run test -- --coverage
       - name: Enforce 70%+ coverage
         run: |
@@ -86,7 +86,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci
+      - run: cd frontend && npm ci
       # Example for Detox; change to your integration test runner if different
       # - run: npm run build:android
       # - run: npm run e2e
@@ -111,5 +111,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci
+      - run: cd frontend && npm ci
       - run: npm audit --audit-level=critical --production
