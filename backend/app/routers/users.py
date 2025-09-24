@@ -4,7 +4,10 @@ from models import schemas, models, auth
 import crud
 from database import get_db
 from typing import List
+# <<<<<<< AI-blood-eligebilty-Checker/issue-6
 from models.ai_model import *
+# =======
+# >>>>>>> backend-develop
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -30,6 +33,7 @@ def get_user_received_donations(user_id: int, current: dict = Depends(auth.get_c
 
 @router.get("/{user_id}/requests", response_model=List[schemas.RequestOut])
 def get_user_requests(user_id: int, current: dict = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+# <<<<<<< AI-blood-eligebilty-Checker/issue-6
     pass
 
 @router.post("/assess-eligibility", response_model=EligibilityResult)
@@ -72,3 +76,6 @@ async def assess_donor_eligibility(questionnaire: CameroonDonorQuestionnaire):
 #   "alcohol_or_drugs_recent": false,
 #   "previous_health_issues": false
 # }
+# =======
+#     pass
+# >>>>>>> backend-develop
