@@ -1,5 +1,4 @@
 name: Frontend CI/CD (React Native + Expo)
-
 on:
   push:
     branches:
@@ -7,6 +6,10 @@ on:
   pull_request:
     branches:
       - frontend-develop
+
+defaults:
+  run:
+    working-directory: ./frontend
 
 jobs:
   lint:
@@ -16,8 +19,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - run: cd frontend && npm ci
+          node-version: 20
+      - run: npm ci
       - run: npm run lint
 
   build-android:
@@ -27,8 +30,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - run: cd frontend && npm ci
+          node-version: 20
+      - run: npm ci
       - run: npx expo install
       - run: npx expo build:android --non-interactive
 
@@ -39,8 +42,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - run: cd frontend && npm ci
+          node-version: 20
+      - run: npm ci
       - run: npx expo install
       - run: npx expo build:ios --non-interactive
 
@@ -53,8 +56,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - run: cd frontend && npm ci
+          node-version: 20
+      - run: npm ci
       - run: npx expo install
       - run: npx expo login -u ${{ secrets.EXPO_USERNAME }} -p ${{ secrets.EXPO_PASSWORD }}
       - run: npx expo publish --non-interactive
@@ -66,8 +69,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - run: cd frontend && npm ci
+          node-version: 20
+      - run: npm ci
       - run: npm run test -- --coverage
       - name: Enforce 70%+ coverage
         run: |
@@ -85,8 +88,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - run: cd frontend && npm ci
+          node-version: 20
+      - run: npm ci
       # Example for Detox; change to your integration test runner if different
       # - run: npm run build:android
       # - run: npm run e2e
@@ -101,6 +104,9 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - uses: actions/dependency-review-action@v4
+        with:
+          base-ref: ${{ github.event.pull_request.base.sha }}
+          head-ref: ${{ github.event.pull_request.head.sha }}
 
   # Security audit using npm audit
   security-audit:
@@ -110,6 +116,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - run: cd frontend && npm ci
-      - run: npm audit --audit-level=critical --production
+          node-version: 20
+      - run: npm ci
+      - run: npm audit --audit-level=critical --omit=dev
